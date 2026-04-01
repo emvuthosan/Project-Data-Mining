@@ -4,3 +4,7 @@ numpy
 matplotlib
 torch
 networkx
+scikit-learn
+scipy
+tqdm
+python-dotenv
