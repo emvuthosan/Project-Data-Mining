@@ -1,24 +1,23 @@
 import joblib
+import numpy as np
 import pandas as pd
 
 def load_model():
-    lgb_model = joblib.load("model/lgb_model.pkl")
-    rf_model = joblib.load("model/rf_model.pkl")
-    return lgb_model, rf_model
-
+    data = joblib.load("model/ensemble_models.pkl")
+    return data["lgb_models"], data["rf_models"], data["threshold"]
 
 def predict(df, X):
-    lgb_model, rf_model = load_model()
+    lgb_models, rf_models, threshold = load_model()
 
-    # predict probability
-    lgb_prob = lgb_model.predict_proba(X)[:,1]
-    rf_prob = rf_model.predict_proba(X)[:,1]
+    # Predict average across folds
+    lgb_probs = np.mean([model.predict_proba(X)[:, 1] for model in lgb_models], axis=0)
+    rf_probs = np.mean([model.predict_proba(X)[:, 1] for model in rf_models], axis=0)
 
     # ensemble
-    y_prob = (lgb_prob + rf_prob) / 2
+    y_prob = (lgb_probs + rf_probs) / 2
 
     # threshold
-    y_pred = (y_prob > 0.3).astype(int)
+    y_pred = (y_prob > threshold).astype(int)
 
     # output
     result = df[["account_id"]].copy()

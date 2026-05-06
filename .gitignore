@@ -107,3 +107,4 @@ htmlcov/
 .mypy_cache/
 .tox/
 node_modules/
+*.pkl

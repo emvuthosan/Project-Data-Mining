@@ -1,50 +1,29 @@
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 
-def build_graph_features(df, communities, fraud_accounts, cycles):
-
-    # ===== FIX COMMUNITY =====
-    communities = communities.rename(columns={
-        "AccountID": "account_id",
-        "communityId": "community_id"
-    })
-
-    df = df.merge(communities, on="account_id", how="left")
-
-    # encode community
+def build_graph_features(df):
+    # encode community since it is categorical
     if "community_id" in df.columns:
         le = LabelEncoder()
         df["community_id"] = le.fit_transform(df["community_id"].astype(str))
 
-    # ===== FIX FRAUD ACCOUNTS =====
-    fraud_accounts = fraud_accounts.rename(columns={
-        "Suspicious_Account": "account_id"
-    })
+    # ===== Encode trust_level (ordinal) =====
+    if "trust_level" in df.columns:
+        trust_order = {"VERY_LOW": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 3, "VERY_HIGH": 4}
+        df["trust_level_encoded"] = df["trust_level"].map(trust_order).fillna(-1).astype(int)
 
-    fraud_accounts["is_known_fraud"] = 1
+    # ===== Encode credit_level (ordinal) =====
+    if "credit_level" in df.columns:
+        credit_order = {"Very Poor": 0, "Poor": 1, "Fair": 2, "Good": 3, "Excellent": 4}
+        df["credit_level_encoded"] = df["credit_level"].map(credit_order).fillna(-1).astype(int)
 
-    df = df.merge(
-        fraud_accounts[["account_id", "is_known_fraud"]],
-        on="account_id",
-        how="left"
-    )
-
-    df["is_known_fraud"] = df["is_known_fraud"].fillna(0)
-
-    # ===== FIX CYCLES =====
-    # chuyển từ A,B,C → 1 list account_id
-    cycle_accounts = pd.concat([
-        cycles["Account_A"],
-        cycles["Account_B"],
-        cycles["Account_C"]
-    ]).dropna().unique()
-
-    cycle_df = pd.DataFrame({
-        "account_id": cycle_accounts,
-        "is_in_cycle": 1
-    })
-
-    df = df.merge(cycle_df, on="account_id", how="left")
-    df["is_in_cycle"] = df["is_in_cycle"].fillna(0)
+    # fill NaN values for some graph metrics if any
+    cols_to_fill = [
+        "trust_score", "trustrank", "pagerank", 
+        "anti_trustrank", "simrank"
+    ]
+    for c in cols_to_fill:
+        if c in df.columns:
+            df[c] = df[c].fillna(0.0)
 
     return df
