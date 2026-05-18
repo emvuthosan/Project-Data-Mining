@@ -1,0 +1,6 @@
+1. Báo cáo bản cứng + mềm (phải ghi rõ Phân công công việc)
+2. TỪNG thành viên nhóm phải nắm cơ bản kiến trúc báo cáo (làm gì, mục tiêu,...) không cần phải chi tiết
+3. TỪNG thành viên phải nắm rõ chi tiết phần mình làm (nói lớ ngớ = 0)
+4. Code bản thân làm phải hiểu rõ flow (có thể thành thật là copy ChatGPT, Github,...), thầy có khả năng hỏi so sánh với 1 số phương pháp tương tự + yêu cầu xóa hay chỉnh sửa 1 số dòng code
+5. PHẢI CÓ DEMO CODE (website, app,..), từng thành viên phải có commit trên github
+6. Có thể làm slide (6-7 slide) đơn giản (trình bày khoảng 5p). Slide cần có: Nói về bài toán (1 slide), Hạn chế/Vấn đề bài tóa, Contribution của nhóm về bài toán, Tổng quan sơ đồ/pipeline, Kết quả đáng kể nhất (đẹp nhất) của nhóm về bài toán, Phân tích kết quả + hướng mở rộng
